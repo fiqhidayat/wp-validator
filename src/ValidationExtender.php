@@ -2,7 +2,7 @@
 
 namespace Fiqhidayat\WPValidator;
 
-use Fiqhidayat\WPValidator\Rules\Rule;
+use Fiqhidayat\WPValidator\Rule;
 
 class ValidationExtender
 {
@@ -21,7 +21,7 @@ class ValidationExtender
 
         // If the implementation is a Rule object
         if ($ruleImplementation instanceof Rule) {
-            Rules\RuleFactory::$rules[$ruleName] = get_class($ruleImplementation);
+            RuleFactory::$rules[$ruleName] = get_class($ruleImplementation);
             return;
         }
 
@@ -35,7 +35,7 @@ class ValidationExtender
                 );
             }
 
-            Rules\RuleFactory::$rules[$ruleName] = $ruleImplementation;
+            RuleFactory::$rules[$ruleName] = $ruleImplementation;
             return;
         }
 
