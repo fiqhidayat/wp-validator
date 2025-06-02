@@ -34,6 +34,55 @@ if ($validator->passes()) {
 }
 ```
 
+## Array Validation Example
+
+The library supports validating nested arrays using wildcards:
+
+```php
+// Complex data structure with nested arrays
+$data = [
+    'user' => [
+        'name' => 'John Doe',
+        'email' => 'john@example.com'
+    ],
+    'skills' => ['PHP', 'JavaScript', 'HTML', 'CSS'],
+    'works' => [
+        [
+            'company_name' => 'Acme Inc',
+            'role' => 'Developer',
+            'start_date' => '2020-01-01'
+        ],
+        [
+            'company_name' => 'XYZ Corp',
+            'role' => 'Senior Developer',
+            'start_date' => '2022-05-01'
+        ]
+    ]
+];
+
+// Define validation rules
+$rules = [
+    'user' => 'required|array',
+    'user.name' => 'required|string|min:3',
+    'user.email' => 'required|email',
+    'skills' => 'nullable|array',
+    'skills.*' => 'string',
+    'works' => 'nullable|array',
+    'works.*.company_name' => 'required|string',
+    'works.*.role' => 'required|string',
+    'works.*.start_date' => 'nullable|date'
+];
+
+$validator = new Validator($data, $rules);
+
+if ($validator->passes()) {
+    // All data is valid
+} else {
+    // Get validation errors
+    $errors = $validator->errors();
+}
+```
+
 ## WordPress Form Example
 
 Here's an example of validating a contact form submission in WordPress:
@@ -96,9 +145,11 @@ This library supports most Laravel validation rules including:
 - `alpha`: The field must contain only alphabetic characters
 - `alpha_dash`: The field may contain alpha-numeric characters, dashes, and underscores
 - `alpha_num`: The field must contain only alpha-numeric characters
+- `array`: The field must be a PHP array
 - `date`: The field must be a valid date
 - `in:foo,bar,...`: The field must be included in the given list of values
 - `not_in:foo,bar,...`: The field must not be included in the given list of values
+- `nullable`: The field can be null or empty string
 - `regex:pattern`: The field must match the given regular expression
 - `boolean`: The field must be a boolean value (true, false, 0, 1, '0', '1')
 - `confirmed`: The field must have a matching field of {field}_confirmation
