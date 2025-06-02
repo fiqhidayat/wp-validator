@@ -20,3 +20,4 @@ wp-includes/
 # System files
 .DS_Store
 Thumbs.db
+.phpunit.result.cache
