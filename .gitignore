@@ -1,0 +1,22 @@
+# Composer dependencies
+/vendor/
+composer.lock
+
+# WordPress files that might get symlinked
+.htaccess
+wp-config.php
+wp-content/
+wp-admin/
+wp-includes/
+
+# Editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
