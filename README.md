@@ -167,7 +167,7 @@ You can extend this validator by creating your own rules. Here's how to create a
 
 ```php
 // Create a class that implements the Rule interface
-class PalindromeRule implements Fiqhidayat\WPValidator\Rules\Rule 
+class PalindromeRule implements Fiqhidayat\WPValidator\Rule 
 {
     public function passes($attribute, $value, array $parameters, $validator) {
         $cleanStr = preg_replace('/[^a-z0-9]/i', '', strtolower($value));
