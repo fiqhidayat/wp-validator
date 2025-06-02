@@ -133,33 +133,52 @@ add_action('wp_ajax_nopriv_contact_form', 'process_contact_form');
 
 This library supports most Laravel validation rules including:
 
+### Core Validation Rules
 - `required`: The field must be present and not empty
-- `email`: The field must be a valid email address
-- `min:value`: String/numeric minimum length or value
-- `max:value`: String/numeric maximum length or value
+- `filled`: The field must not be empty when it is present (but can be absent)
+- `present`: The field must be present in the input data (but may be empty)
+- `nullable`: The field can be null or empty string
+
+### Data Type Rules
+- `string`: The field must be a string
 - `numeric`: The field must be numeric
 - `integer`: The field must be an integer
-- `string`: The field must be a string
+- `boolean`: The field must be a boolean value (true, false, 0, 1, '0', '1')
+- `array`: The field must be a PHP array
+- `date`: The field must be a valid date
+- `json`: The field must be a valid JSON string
+- `timezone`: The field must be a valid timezone
+
+### String Rules
+- `email`: The field must be a valid email address
 - `url`: The field must be a valid URL
 - `ip`: The field must be a valid IP address
 - `alpha`: The field must contain only alphabetic characters
-- `alpha_dash`: The field may contain alpha-numeric characters, dashes, and underscores
 - `alpha_num`: The field must contain only alpha-numeric characters
-- `array`: The field must be a PHP array
-- `date`: The field must be a valid date
-- `in:foo,bar,...`: The field must be included in the given list of values
-- `not_in:foo,bar,...`: The field must not be included in the given list of values
-- `nullable`: The field can be null or empty string
+- `alpha_dash`: The field may contain alpha-numeric characters, dashes, and underscores
 - `regex:pattern`: The field must match the given regular expression
-- `boolean`: The field must be a boolean value (true, false, 0, 1, '0', '1')
-- `confirmed`: The field must have a matching field of {field}_confirmation
+
+### Size Validation Rules
+- `min:value`: String/numeric minimum length or value
+- `max:value`: String/numeric maximum length or value
+- `size:value`: The field must match the specified size (string length, numeric value, array count, or file size in KB)
+- `digits:value`: The field must be a numeric value with the exact length specified
+- `digits_between:min,max`: The field must be a numeric value with a length between the specified min and max
+
+### Comparison Rules
 - `same:field`: The field must match the specified field
 - `different:field`: The field must be different from the specified field
-- `json`: The field must be a valid JSON string
-- `timezone`: The field must be a valid timezone
+- `confirmed`: The field must have a matching field of {field}_confirmation
+- `in:foo,bar,...`: The field must be included in the given list of values
+- `not_in:foo,bar,...`: The field must not be included in the given list of values
+- `unique:table,column,except,idColumn`: The field must be unique in a database table
+
+### File Validation Rules
 - `file`: The field must be a successfully uploaded file
 - `image`: The field must be an image file (jpeg, png, bmp, gif, svg, webp)
-- `unique:table,column,except,idColumn`: The field must be unique in a database table
+- `mimes:jpg,png,...`: The field must be a file with one of the specified extensions
+- `mimetypes:image/jpeg,image/png,...`: The field must be a file with one of the specified MIME types
+- `dimensions:width=value,height=value,...`: The field must be an image that meets the specified dimensions constraints
 
 ## Custom Implementation
 
