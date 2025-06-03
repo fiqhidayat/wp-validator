@@ -55,6 +55,18 @@ class Validator
     }
 
     /**
+     * create a new validator instance from static context.
+     *
+     * @param array $data
+     * @param array $rules
+     * @return static
+     */
+    public static function make(array $data, array $rules)
+    {
+        return new static($data, $rules);
+    }
+
+    /**
      * Run the validator's rules against its data.
      *
      * @return array
@@ -87,7 +99,12 @@ class Validator
             return;
         }
 
-        $ruleArray = explode('|', $rules);
+        //allow rules to be a string or an array
+        if (is_array($rules)) {
+            $ruleArray = $rules;
+        } else {
+            $ruleArray = explode('|', $rules);
+        }
 
         foreach ($ruleArray as $rule) {
             $this->validateRule($attribute, $rule);
