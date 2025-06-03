@@ -238,7 +238,9 @@ class Validator
             return false;
         }
 
-        return strpos($this->rules[$attribute], 'nullable') !== false;
+        $rules = is_array($this->rules[$attribute]) ? implode('|', $this->rules[$attribute]) : $this->rules[$attribute];
+
+        return strpos($rules, 'nullable') !== false;
     }
 
     /**
