@@ -169,6 +169,10 @@ This library supports most Laravel validation rules including:
 - `same:field`: The field must match the specified field
 - `different:field`: The field must be different from the specified field
 - `confirmed`: The field must have a matching field of {field}_confirmation
+- `gt:field`: The field must be greater than the specified field (numeric)
+- `gte:field`: The field must be greater than or equal to the specified field (numeric)
+- `lt:field`: The field must be less than the specified field (numeric)
+- `lte:field`: The field must be less than or equal to the specified field (numeric)
 - `in:foo,bar,...`: The field must be included in the given list of values
 - `not_in:foo,bar,...`: The field must not be included in the given list of values
 - `unique:table,column,except,idColumn`: The field must be unique in a database table

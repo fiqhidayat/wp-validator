@@ -419,4 +419,15 @@ class Validator
 
         return $value;
     }
+
+    /**
+     * Get the value of a field from the data being validated.
+     *
+     * @param string $field The field name (supports dot notation for nested arrays)
+     * @return mixed The field value
+     */
+    public function getValue($field)
+    {
+        return $this->getDataByPath($field);
+    }
 }

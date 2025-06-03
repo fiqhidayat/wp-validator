@@ -27,8 +27,12 @@ use Fiqhidayat\WPValidator\Rules\{
     DimensionsRule,
     FileRule,
     FilledRule,
+    GreaterThanRule,
+    GreaterThanOrEqualRule,
     ImageRule,
     JsonRule,
+    LessThanRule,
+    LessThanOrEqualRule,
     MimesRule,
     MimeTypesRule,
     NullableRule,
@@ -83,6 +87,10 @@ class RuleFactory
         'timezone' => TimezoneRule::class,
         'unique' => UniqueRule::class,
         'array' => ArrayRule::class,
+        'gt' => GreaterThanRule::class,
+        'gte' => GreaterThanOrEqualRule::class,
+        'lt' => LessThanRule::class,
+        'lte' => LessThanOrEqualRule::class,
     ];
 
     /**
