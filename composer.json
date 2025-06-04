@@ -9,6 +9,10 @@
         "validator",
         "laravel"
     ],
+    "support": {
+        "issues": "https://github.com/fiqhidayat/wp-validator/issues",
+        "source": "https://github.com/fiqhidayat/wp-validator"
+    },
     "license": "GPL-2.0-or-later",
     "authors": [
         {
