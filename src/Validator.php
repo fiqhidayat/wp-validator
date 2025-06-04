@@ -99,11 +99,32 @@ class Validator
             return;
         }
 
-        //allow rules to be a string or an array
+        // Allow rules to be a string or an array
         if (is_array($rules)) {
             $ruleArray = $rules;
         } else {
             $ruleArray = explode('|', $rules);
+        }
+
+        // Ensure the attribute exists in data structure when using dot notation
+        if (strpos($attribute, '.') !== false) {
+            $value = $this->getDataByPath($attribute);
+
+            // Skip validation if the nested path doesn't exist
+            if ($value === null && !$this->isNullable($attribute)) {
+                // For required fields, we still need to validate
+                $hasRequiredRule = false;
+                foreach ($ruleArray as $rule) {
+                    if ($rule === 'required' || strpos($rule, 'required:') === 0) {
+                        $hasRequiredRule = true;
+                        break;
+                    }
+                }
+
+                if (!$hasRequiredRule) {
+                    return;
+                }
+            }
         }
 
         foreach ($ruleArray as $rule) {
@@ -203,7 +224,7 @@ class Validator
             $parameters = explode(',', $paramStr);
         }
 
-        $value = isset($this->data[$attribute]) ? $this->data[$attribute] : null;
+        $value = $this->getDataByPath($attribute);
 
         // Skip validation if the field is nullable and the value is null
         if ($rule !== 'nullable' && $this->isNullable($attribute) && $value === null) {
@@ -234,13 +255,33 @@ class Validator
      */
     protected function isNullable($attribute)
     {
-        if (!isset($this->rules[$attribute])) {
-            return false;
+        // Direct match for the exact attribute
+        if (isset($this->rules[$attribute])) {
+            $rules = is_array($this->rules[$attribute]) ? implode('|', $this->rules[$attribute]) : $this->rules[$attribute];
+            return strpos($rules, 'nullable') !== false;
         }
 
-        $rules = is_array($this->rules[$attribute]) ? implode('|', $this->rules[$attribute]) : $this->rules[$attribute];
+        // Check parent paths for nested attributes
+        if (strpos($attribute, '.') !== false) {
+            $segments = explode('.', $attribute);
+            $currentPath = '';
 
-        return strpos($rules, 'nullable') !== false;
+            foreach ($segments as $segment) {
+                $currentPath = $currentPath ? $currentPath . '.' . $segment : $segment;
+
+                if (isset($this->rules[$currentPath])) {
+                    $rules = is_array($this->rules[$currentPath]) ?
+                        implode('|', $this->rules[$currentPath]) :
+                        $this->rules[$currentPath];
+
+                    if (strpos($rules, 'nullable') !== false) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -273,7 +314,18 @@ class Validator
         $validated = [];
 
         foreach ($this->rules as $key => $value) {
-            if (isset($this->data[$key])) {
+            // Skip wildcard rules as they are handled separately
+            if (strpos($key, '*') !== false) {
+                continue;
+            }
+
+            // Handle dot notation for nested keys
+            if (strpos($key, '.') !== false) {
+                $fieldValue = $this->getDataByPath($key);
+                if ($fieldValue !== null) {
+                    $this->setNestedValue($validated, $key, $fieldValue);
+                }
+            } else if (isset($this->data[$key])) {
                 $validated[$key] = $this->data[$key];
             }
         }
@@ -429,5 +481,36 @@ class Validator
     public function getValue($field)
     {
         return $this->getDataByPath($field);
+    }
+
+    /**
+     * Set a nested value in an array using dot notation
+     *
+     * @param array &$array The array to set the value in
+     * @param string $path The path in dot notation
+     * @param mixed $value The value to set
+     * @return void
+     */
+    protected function setNestedValue(&$array, $path, $value)
+    {
+        $segments = explode('.', $path);
+        $current = &$array;
+
+        // Build the nested structure
+        foreach ($segments as $i => $segment) {
+            // If we're at the last segment, set the value
+            if ($i === count($segments) - 1) {
+                $current[$segment] = $value;
+                break;
+            }
+
+            // If the segment doesn't exist or is not an array, create it
+            if (!isset($current[$segment]) || !is_array($current[$segment])) {
+                $current[$segment] = [];
+            }
+
+            // Move deeper into the array
+            $current = &$current[$segment];
+        }
     }
 }
