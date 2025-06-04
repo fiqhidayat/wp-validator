@@ -34,9 +34,41 @@ if ($validator->passes()) {
 }
 ```
 
+## Nested Validation with Dot Notation
+
+The library supports validating nested arrays and objects using dot notation:
+
+```php
+// Complex data structure with nested properties
+$data = [
+    'user' => [
+        'name' => 'John Doe',
+        'email' => 'john@example.com'
+    ],
+    'product' => [
+        'price' => [
+            'regular' => 100,
+            'sale' => 80
+        ]
+    ]
+];
+
+// Use dot notation to access nested fields
+$rules = [
+    'user.name' => 'required|min:3',
+    'user.email' => 'required|email',
+    'product.price.sale' => 'required|numeric|lt:product.price.regular', // Compare with another nested field
+    'product.price.regular' => 'required|numeric'
+];
+
+$validator = new Validator($data, $rules);
+```
+
+This feature works with all validation rules including the comparison rules.
+
 ## Array Validation Example
 
-The library supports validating nested arrays using wildcards:
+The library also supports validating nested arrays using wildcards:
 
 ```php
 // Complex data structure with nested arrays
