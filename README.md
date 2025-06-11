@@ -209,6 +209,25 @@ This library supports most Laravel validation rules including:
 - `not_in:foo,bar,...`: The field must not be included in the given list of values
 - `unique:table,column,except,idColumn`: The field must be unique in a database table
 
+### Database Rules
+- `exists:table,column,where_column,where_value`: The field must exist in the specified database table
+  - `table`: The database table name (without wp_ prefix)
+  - `column`: The column to check (optional, defaults to the field name)
+  - `where_column`: Additional where condition column (optional)
+  - `where_value`: Additional where condition value (optional)
+
+Examples:
+```php
+// Check if user ID exists in users table
+'user_id' => 'exists:users,id'
+
+// Check if email exists in users table  
+'email' => 'exists:users,email'
+
+// Check if category exists and is active
+'category_id' => 'exists:categories,id,status,active'
+```
+
 ### File Validation Rules
 - `file`: The field must be a successfully uploaded file
 - `image`: The field must be an image file (jpeg, png, bmp, gif, svg, webp)
