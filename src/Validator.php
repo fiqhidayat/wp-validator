@@ -108,6 +108,11 @@ class Validator
 
         // Ensure the attribute exists in data structure when using dot notation
         if (strpos($attribute, '.') !== false) {
+            // Check if any parent path is nullable and null
+            if ($this->shouldSkipDueToNullableParent($attribute)) {
+                return;
+            }
+
             $value = $this->getDataByPath($attribute);
 
             // Skip validation if the nested path doesn't exist
@@ -512,5 +517,47 @@ class Validator
             // Move deeper into the array
             $current = &$current[$segment];
         }
+    }
+
+    /**
+     * Check if validation should be skipped due to a nullable parent being null.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function shouldSkipDueToNullableParent($attribute)
+    {
+        if (strpos($attribute, '.') === false) {
+            return false;
+        }
+
+        $segments = explode('.', $attribute);
+        $currentPath = '';
+
+        // Check each parent path
+        foreach ($segments as $i => $segment) {
+            $currentPath = $currentPath ? $currentPath . '.' . $segment : $segment;
+
+            // Don't check the final segment (the attribute itself)
+            if ($i === count($segments) - 1) {
+                break;
+            }
+
+            // Check if this parent path is nullable and null
+            if (isset($this->rules[$currentPath])) {
+                $rules = is_array($this->rules[$currentPath]) ?
+                    implode('|', $this->rules[$currentPath]) :
+                    $this->rules[$currentPath];
+
+                if (strpos($rules, 'nullable') !== false) {
+                    $parentValue = $this->getDataByPath($currentPath);
+                    if ($parentValue === null) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
